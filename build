@@ -1,0 +1,52 @@
+#!/bin/bash
+
+PROJECT_DIR=$PWD
+
+clean(){
+	echo "CLEAN"
+	rm -rf bin
+}
+
+build_debug(){
+	echo "BUILD DEBUG"
+	mkdir -p $PROJECT_DIR/bin/_build_debug
+	cd $PROJECT_DIR/bin/_build_debug
+	cmake -DCMAKE_BUILD_TYPE=Debug $PROJECT_DIR
+	cmake --build $PROJECT_DIR/bin/_build_debug
+	cd $PROJECT_DIR
+}
+
+build_release(){
+	echo "BUILD RELEASE"
+	mkdir -p $PROJECT_DIR/bin/_build_release
+	cd $PROJECT_DIR/bin/_build_release
+	cmake -DCMAKE_BUILD_TYPE=Release $PROJECT_DIR
+	cmake --build $PROJECT_DIR/bin/_build_release
+	cd $PROJECT_DIR
+}
+
+if [[ $# -eq 0 ]]
+then
+	build_debug
+else
+	POSITIONAL=()
+	while [[ $# -gt 0 ]]
+	do
+		key="$1"
+		case $key in
+			-c|--clean)
+			clean
+			shift
+			;;
+			-r|--release)
+			build_release
+			shift
+			;;
+			-d|--debug)
+			build_debug
+			shift
+			;;
+		esac
+	done
+fi
+
